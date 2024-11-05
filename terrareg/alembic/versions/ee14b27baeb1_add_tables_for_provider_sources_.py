@@ -8,6 +8,7 @@ Create Date: 2023-10-27 07:29:45.605137
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import mysql
+from sqlalchemy import text
 
 # revision identifiers, used by Alembic.
 revision = 'ee14b27baeb1'
@@ -125,7 +126,7 @@ def upgrade():
     )
     op.add_column('namespace', sa.Column('namespace_type', sa.Enum('NONE', 'GITHUB_USER', 'GITHUB_ORGANISATION', name='namespacetype'), nullable=True))
     bind = op.get_bind()
-    bind.execute("UPDATE namespace SET namespace_type='NONE'")
+    bind.execute(text("UPDATE namespace SET namespace_type='NONE'"))
     with op.batch_alter_table("namespace") as batch_op:
         batch_op.alter_column("namespace_type", nullable=False, existing_type=sa.Enum('NONE', 'GITHUB_USER', 'GITHUB_ORGANISATION', name='namespacetype'))
 

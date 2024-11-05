@@ -7,6 +7,7 @@ Create Date: 2024-03-14 06:05:26.867657
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy import text
 
 
 # revision identifiers, used by Alembic.
@@ -25,7 +26,7 @@ def upgrade():
         batch_op.add_column(sa.Column('git_path', sa.String(length=1024), nullable=True))
 
     bind = op.get_bind()
-    module_provider_paths = bind.execute("""SELECT id, git_path FROM module_provider""")
+    module_provider_paths = bind.execute(text("SELECT id, git_path FROM module_provider"))
     for module_provider_id, git_path in module_provider_paths:
         bind.execute(
             sa.sql.text(

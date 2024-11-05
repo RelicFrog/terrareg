@@ -7,6 +7,7 @@ Create Date: 2023-01-22 09:18:23.880577
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy import text
 
 
 # revision identifiers, used by Alembic.
@@ -22,7 +23,7 @@ def upgrade():
 
     # Update column with default value
     c = op.get_bind()
-    c.execute(f"""UPDATE module_version SET extraction_version=1""")
+    c.execute(text("UPDATE module_version SET extraction_version=1"))
 
 
 def downgrade():

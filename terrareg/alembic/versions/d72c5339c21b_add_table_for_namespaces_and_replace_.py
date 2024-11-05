@@ -7,6 +7,7 @@ Create Date: 2022-09-28 06:14:12.046484
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy import text
 
 
 # revision identifiers, used by Alembic.
@@ -30,7 +31,7 @@ def upgrade():
 
     # Migrate namespace column of module provider to new namespace table
     c = op.get_bind()
-    module_providers = c.execute(f"""SELECT id, namespace FROM module_provider""")
+    module_providers = c.execute(text("SELECT id, namespace FROM module_provider"))
     created_namespaces = {}
     for row in module_providers:
 
