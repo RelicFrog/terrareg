@@ -1,0 +1,24 @@
+#
+# tmux profile configuration - not used in this project right now.
+# --
+session_name: dbx_tmux_4_ice_api
+suppress_history: false
+environment:
+  PAGER: bat
+  API_PROXY_ZONE: $C_DBX_OPS_API_PROXY_ZONE
+  API_PROXY_PROJECT_NAME: $C_DBX_OPS_API_PROXY_PROJECT_NAME
+  API_PROXY_INSTANCE_NAME: $C_DBX_OPS_API_PROXY_INSTANCE_NAME
+  EDP_PROXY_ZONE: $C_DBX_OPS_EDP_PROXY_ZONE
+  EDP_PROXY_PROJECT_NAME: $C_DBX_OPS_EDP_PROXY_PROJECT_NAME
+  EDP_PROXY_INSTANCE_NAME: $C_DBX_OPS_EDP_PROXY_INSTANCE_NAME
+windows:
+  - window_name: devbox-ice-api
+    focus: True
+    layout: main-horizontal
+    options:
+      main-pane-height: 80%
+      automatic-rename: on
+    panes:
+      -
+      - shell_command:
+        - ./scripts/devbox/ops/x_tunnel_api.sh $API_PROXY_ZONE $API_PROXY_PROJECT_NAME $API_PROXY_INSTANCE_NAME

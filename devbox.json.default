@@ -1,0 +1,122 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
+  "packages": {
+    "terraform":                           "1.9.8",
+    "terragrunt":                          "0.67.9",
+    "python":                              "3.12.6",
+    "python312Packages.pip":               "24.0",
+    "go":                                  "1.22.5",
+    "golangci-lint":                       "1.59.1",
+    "gofumpt":                             "0.6.0",
+    "gitleaks":                            "8.18.4",
+    "ripgrep":                             "14.1.0",
+    "fzf":                                 "0.54.0",
+    "jq":                                  "1.7.1",
+    "tree":                                "2.1.2",
+    "wget":                                "1.24.5",
+    "curl":                                "8.8.0",
+    "lazygit":                             "0.43.1",
+    "gh":                                  "2.52.0",
+    "pstree":                              "2.39",
+    "fping":                               "5.2",
+    "glow":                                "1.5.1",
+    "bat":                                 "0.24.0",
+    "moreutils":                           "0.69",
+    "tmux":                                "3.4",
+    "tmuxp":                               "1.47.0",
+    "sops":                                "3.9.0",
+    "netcat":                              "3.9.2",
+    "k9s":                                 "0.32.5",
+    "kubectl":                             "1.29.4",
+    "kubectl-ktop":                        "0.3.6",
+    "kubectx":                             "0.9.5",
+    "kubernetes-helm":                     "3.15.3",
+    "kubernetes-helmPlugins.helm-secrets": "4.6.0",
+    "netperf": {
+      "version": "20210121", "excluded_platforms": ["aarch64-darwin"]
+    }
+  },
+  "env": {
+    "PATH":  "$PATH:$PWD/dist",
+    "C_DBX_META_VERSION": "0.13.6",
+    "C_DBX_META_TEAM": "TerraReg",
+    "C_DBX_META_TEAM_ID": "TR24",
+    "C_DBX_GKE_PROJECT_ID": "<your-project-id>",
+    "C_DBX_GKE_PROJECT_NUM": "<your-project-num>"
+    "C_DBX_INIT_SESSION_NAME": "dbx_tmux_4_ice_api",
+    "C_DBX_INIT_SESSION_FILE_MARKER": ".devbox/.session_is_active"
+  },
+  "shell": {
+    "init_hook": [
+      "scripts/devbox/dbx_init.sh"
+    ],
+    "scripts": {
+      "help": [
+        "PAGER='bat' glow -p scripts/devbox/doc/dbx_main.md"
+      ],
+      "gen-bin": [
+        "make build"
+      ],
+      "gen-docs": [
+        "make docs"
+      ],
+      "check-cp": [
+        "make test-provider"
+      ],
+      "check-ds": [
+        "make test-datasource"
+      ],
+      "check-rs": [
+        "make test-resource"
+      ],
+      "check-plan": [
+        "make test-plan"
+      ],
+      "tf-cl": [
+        "make tf-clear-logs"
+      ],
+      "tf-cc": [
+        "make tf-clear-cache"
+      ],
+      "tests": [
+        "make test"
+      ],
+      "build": [
+        "echo \"[ops/make] exec golang-build ...\"",
+        "make build"
+      ],
+      "check": [
+        "echo \"[ops/make] exec golang-checks ...\"",
+        "make check"
+      ],
+      "update": [
+        "echo \"Disable Usage Reporting ...\"",
+        "gcloud config set disable_usage_reporting true",
+        "echo \"Update GCloud Components now ...\"",
+        "gcloud components update"
+      ],
+      "logout": [
+        "echo \"Logout from application-default resources ...\"",
+        "gcloud auth application-default revoke --quiet",
+        "echo \"Logout from core resources ...\"",
+        "gcloud auth revoke --all"
+      ],
+      "login": [
+        "echo \"Login to GCP Cloud API ...\"",
+        "gcloud auth login ;",
+        "echo \"Login to application-default resources ...\"",
+        "gcloud auth application-default login"
+      ],
+      "login-hub": [
+        "echo \"Login to GCP Docker-Image Artifactory ...\"",
+        "gcloud auth configure-docker europe-west3-docker.pkg.dev",
+        "echo \"Login to GCP Helm-Chart Artifactory ...\"",
+        "helm registry login -u oauth2accesstoken -p \"$(gcloud auth print-access-token)\" europe-west3-docker.pkg.dev"
+      ],
+      "whoami": [
+        "echo \"Check current gcloud-sdk/gcp-api authentication-state ...\"",
+        ". ./scripts/devbox/ops/x_gcloud_whoami.sh"
+      ]
+    }
+  }
+}
