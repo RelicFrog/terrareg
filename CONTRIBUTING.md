@@ -13,14 +13,14 @@ A Gitlab issue must be included at the bottom of the commit message `Issue #123`
 
 This format is important for the CI to perform releases and update release notes accurately.
 
-If there isn't a gitlab issue for the task that you are working on, please feel free to ask for one (raise a Github issue and maintainer can rcreate an issue for you. Alternatively, request access to Gitlab, which should be granted)
+If there isn't a gitlab issue for the task that you are working on, please feel free to ask for one (raise a GitHub issue and maintainer can rcreate an issue for you. Alternatively, request access to Gitlab, which should be granted)
 
 
 ## Upstream
 
 The main upstream of this project is https://gitlab.dockstudios.co.uk/pub/terrareg.
 
-Any changes submitted to any other instance (e.g. Github, Gitlab Cloud etc.) will be manually applied to the upstream and will then replicate downstream to other locations.
+Any changes submitted to any other instance (e.g. GitHub, Gitlab Cloud etc.) will be manually applied to the upstream and will then replicate downstream to other locations.
 
 If you'd prefer, feel free to register an account to the main upstream - though registrations require approval, so just ping me an email :)
 
