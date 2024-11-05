@@ -1,4 +1,4 @@
-version: '3.9'
+# version: '3.9'
 
 services:
 
@@ -63,8 +63,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${DOCKER_NAME}_app.tls=true"
       - "traefik.http.routers.${DOCKER_NAME}_app.rule=Host(`terrareg.${DOCKER_BASE_URL}`)"
-      - "traefik.http.services.${DOCKER_NAME}_app.loadbalancer.server.port=5000"
       - "traefik.http.routers.${DOCKER_NAME}_app.service=${DOCKER_NAME}_app"
+      - "traefik.http.services.${DOCKER_NAME}_app.loadbalancer.server.port=5000"
     depends_on:
       - mysql
       - traefik
@@ -73,7 +73,6 @@ services:
       - ./.env
     volumes:
       - ./:/app
-      # - ~/.ssh/:/root/.ssh/:ro
     networks:
       web:
     healthcheck:
@@ -92,7 +91,7 @@ services:
     env_file:
       - ./.env
     healthcheck:
-      test: ['CMD', '/opt/bitnami/scripts/mysql/healthcheck.sh']
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "terrareg", "-pterrareg"]
       interval: 5s
       timeout: 5s
       retries: 10
