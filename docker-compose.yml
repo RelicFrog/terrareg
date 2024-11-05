@@ -51,7 +51,7 @@ services:
       - "traefik.http.routers.${DOCKER_NAME}_traefik.tls=true"
       # # Enable Traefik API handler entrypoint on http.
       - "traefik.http.routers.${DOCKER_NAME}_traefik-http.entrypoints=web"
-      # # By default the Traefik API handler operates on the port [8080].
+      # # By default, the Traefik API handler operates on the port [8080].
       # # Define a load balancer to route the entry point to [8080].
       - "traefik.http.services.${DOCKER_NAME}_traefik.loadbalancer.server.port=8080"
 
@@ -120,8 +120,8 @@ services:
   minio:
     image: minio/minio
     ports:
-     - 9000:9000
-     - 9001:9001
+     - "9000:9000"
+     - "9001:9001"
     restart: always
     env_file:
      - .env
