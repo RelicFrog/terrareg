@@ -50,6 +50,40 @@ init_check() {
   # echo "◼︎ check : init os-related bootstrap scripts at [./${C_DBX_INIT_PATH}] for [${C_DBX_OS}] ✔"
 
   #
+  # check docker installation/availability
+  # --
+  if ! command -v docker &> /dev/null
+  then
+    echo "ERROR : local docker service not available, check required packages/setup first!"
+    echo "LINK  : https://docs.docker.com/engine/install/"
+    exit 1
+  else
+    echo "◼︎ check : docker is available ✔︎"
+  fi
+
+  #
+  # check docker compose plugin installation/availability
+  # --
+  if ! docker compose version &> /dev/null; then
+    echo "ERROR : Docker Compose as a plugin is not available, check required packages/setup first!"
+    echo "LINK  : https://docs.docker.com/compose/install/"
+    exit 1
+  else
+    echo "◼︎ check : docker compose plugin is available ✔︎"
+  fi
+
+  #
+  # check docker buildx plugin installation/availability
+  # --
+  if ! docker buildx version &> /dev/null; then
+    echo "ERROR : Docker Buildx as a plugin is not available, check required packages/setup first!"
+    echo "LINK  : https://docs.docker.com/buildx/working-with-buildx/"
+    exit 1
+  else
+    echo "◼︎ check : docker buildx plugin is available ✔︎"
+  fi
+
+  #
   # check gcloud-sdk installation/availability
   # --
   if ! command -v gcloud &> /dev/null
@@ -71,18 +105,6 @@ init_check() {
     exit 1
   else
     echo "◼︎ check : terraform is available ✔︎"
-  fi
-
-  #
-  # check terragrunt installation/availability
-  # --
-  if ! command -v terragrunt &> /dev/null
-  then
-    echo "ERROR : local terragrunt binary not available, check required packages/setup first!"
-    echo "LINK  : https://terragrunt.gruntwork.io/docs/getting-started/install/"
-    exit 1
-  else
-    echo "◼︎ check : terragrunt is available ✔︎"
   fi
 
   #
@@ -129,7 +151,8 @@ init_print_help () {
   echo "------------------------------------------------------------------------------------------------------------------";
   echo "Available project scripts (excerpt)"
   echo "------------------------------------------------------------------------------------------------------------------";
-  echo "$ none"
+  echo "$ devbox run init_pyenv      | initialize local (virtual) python environment and install all dependencies"
+  echo "$ devbox run init_db         | initialize local (sqlite) database and test current migration script(s)"
   echo "------------------------------------------------------------------------------------------------------------------";
   echo "Available core/system scripts (excerpt)"
   echo "------------------------------------------------------------------------------------------------------------------";
