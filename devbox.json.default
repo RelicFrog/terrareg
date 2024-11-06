@@ -1,13 +1,20 @@
 {
-  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devboxv0.13.6/.schema/devbox.schema.json",
   "packages": {
     "terraform":                           "1.9.8",
     "terragrunt":                          "0.67.9",
-    "python":                              "3.12.6",
+    "terraform-docs":                      "0.18.0",
+    "tfsec":                               "1.28.11",
+    "infracost":                           "0.10.38",
+    "alembic":                             "1.8.7",
+    "python":                              "3.12.4",
     "python312Packages.pip":               "24.0",
-    "go":                                  "1.22.5",
-    "golangci-lint":                       "1.59.1",
-    "gofumpt":                             "0.6.0",
+    "python312Packages.pygraphviz":        "1.14",
+    "python312Packages.alembic":           "1.13.1",
+    "python312Packages.flask":             "3.0.3",
+    "python312Packages.packaging":         "24.1",
+    "pkg-config":                          "0.29.2",
+    "graphviz":                            "12.1.1",
     "gitleaks":                            "8.18.4",
     "ripgrep":                             "14.1.0",
     "fzf":                                 "0.54.0",
@@ -26,25 +33,25 @@
     "tmuxp":                               "1.47.0",
     "sops":                                "3.9.0",
     "netcat":                              "3.9.2",
+    "mkcert":                              "1.4.4",
     "k9s":                                 "0.32.5",
     "kubectl":                             "1.29.4",
     "kubectl-ktop":                        "0.3.6",
     "kubectx":                             "0.9.5",
-    "kubernetes-helm":                     "3.15.3",
-    "kubernetes-helmPlugins.helm-secrets": "4.6.0",
-    "netperf": {
-      "version": "20210121", "excluded_platforms": ["aarch64-darwin"]
-    }
+    "kubernetes-helm":                     "3.16.2",
+    "kubernetes-helmPlugins.helm-secrets": "4.6.2"
   },
   "env": {
-    "PATH":  "$PATH:$PWD/dist",
+    "PATH":  "$PATH:$PWD/bin",
     "C_DBX_META_VERSION": "0.13.6",
     "C_DBX_META_TEAM": "TerraReg",
     "C_DBX_META_TEAM_ID": "TR24",
-    "C_DBX_GKE_PROJECT_ID": "<your-project-id>",
-    "C_DBX_GKE_PROJECT_NUM": "<your-project-num>"
-    "C_DBX_INIT_SESSION_NAME": "dbx_tmux_4_ice_api",
-    "C_DBX_INIT_SESSION_FILE_MARKER": ".devbox/.session_is_active"
+    "C_DBX_INIT_GCP_ACCOUNT_CURRENT": "N/A",
+    "C_DBX_INIT_SESSION_FILE_MARKER": ".devbox/.session_is_active",
+    "C_DBX_GKE_PROJECT_ID": "<your-gcp-project-name>",
+    "C_DBX_GKE_PROJECT_NUM": "<your-gcp-project-number>",
+    "C_DBX_APP_LOCAL_DB": "modules.db",
+    "C_DBX_APP_LOCAL_DOMAIN": "app.localhost"
   },
   "shell": {
     "init_hook": [
@@ -54,67 +61,64 @@
       "help": [
         "PAGER='bat' glow -p scripts/devbox/doc/dbx_main.md"
       ],
-      "gen-bin": [
-        "make build"
-      ],
-      "gen-docs": [
-        "make docs"
-      ],
-      "check-cp": [
-        "make test-provider"
-      ],
-      "check-ds": [
-        "make test-datasource"
-      ],
-      "check-rs": [
-        "make test-resource"
-      ],
-      "check-plan": [
-        "make test-plan"
-      ],
-      "tf-cl": [
-        "make tf-clear-logs"
-      ],
-      "tf-cc": [
-        "make tf-clear-cache"
-      ],
-      "tests": [
-        "make test"
-      ],
-      "build": [
-        "echo \"[ops/make] exec golang-build ...\"",
-        "make build"
-      ],
-      "check": [
-        "echo \"[ops/make] exec golang-checks ...\"",
-        "make check"
-      ],
-      "update": [
-        "echo \"Disable Usage Reporting ...\"",
+      "api-update": [
+        "echo \"[ops/cmd] disable Usage Reporting ...\"",
         "gcloud config set disable_usage_reporting true",
-        "echo \"Update GCloud Components now ...\"",
+        "echo \"[ops/cmd] update GCloud Components now ...\"",
         "gcloud components update"
       ],
+      "api-prep": [
+        "echo \"[ops/cmd] prepare GCP Cloud API for project-id [${C_DBX_GKE_PROJECT_ID}] ...\"",
+        "gcloud services enable cloudresourcemanager.googleapis.com --project=${C_DBX_GKE_PROJECT_ID}",
+        "gcloud services enable iamcredentials.googleapis.com --project=${C_DBX_GKE_PROJECT_ID}",
+        "gcloud services enable sts.googleapis.com --project=${C_DBX_GKE_PROJECT_ID}",
+        "gcloud services enable container.googleapis.com --project=${C_DBX_GKE_PROJECT_ID}",
+        "gcloud services enable containerregistry.googleapis.com --project=${C_DBX_GKE_PROJECT_ID}",
+        "gcloud services enable binaryauthorization.googleapis.com --project=${C_DBX_GKE_PROJECT_ID}",
+        "gcloud services enable certificatemanager.googleapis.com --project=${C_DBX_GKE_PROJECT_ID}"
+      ],
       "logout": [
-        "echo \"Logout from application-default resources ...\"",
+        "echo \"[ops/cmd] logout from application-default resources ...\"",
         "gcloud auth application-default revoke --quiet",
-        "echo \"Logout from core resources ...\"",
+        "echo \"[ops/cmd] logout from core resources ...\"",
         "gcloud auth revoke --all"
       ],
       "login": [
-        "echo \"Login to GCP Cloud API ...\"",
+        "echo \"[ops/cmd] login to GCP Cloud API ...\"",
         "gcloud auth login ;",
-        "echo \"Login to application-default resources ...\"",
+        "echo \"[ops/cmd] login to application-default resources ...\"",
         "gcloud auth application-default login"
       ],
       "login-hub": [
-        "echo \"Login to GCP Docker-Image Artifactory ...\"",
+        "echo \"[ops/cmd] login to GCP Docker-Image Artifactory ...\"",
         "gcloud auth configure-docker europe-west3-docker.pkg.dev",
-        "echo \"Login to GCP Helm-Chart Artifactory ...\"",
+        "echo \"[ops/cmd] login to GCP Helm-Chart Artifactory ...\"",
         "helm registry login -u oauth2accesstoken -p \"$(gcloud auth print-access-token)\" europe-west3-docker.pkg.dev"
       ],
+      "preflight": [
+        "echo \"[ops/cmd] prepare local dev-environment ...\"",
+        "mkdir -p certs bin",
+        "mkcert -install",
+        "mkcert -cert-file certs/local-cert.pem -key-file certs/local-key.pem \"${C_DBX_APP_LOCAL_DOMAIN}\" \"*.${C_DBX_APP_LOCAL_DOMAIN}\""
+      ],
+      "preflight_mac": [
+        "echo \"[ops/cmd] prepare local mac-environment ...\"",
+        "brew install libmagic graphviz",
+      ],
+      "init_pyenv": [
+        "echo \"[ops/cmd] prepare local dev-environment ...\"",
+        "virtualenv -ppython3 venv",
+        ". venv/bin/activate",
+        "pip install -r requirements.txt",
+        "pip install -r requirements-dev.txt"
+      ],
+      "init_db": [
+        "echo \"[ops/cmd] prepare local database ...\"",
+        "rm -f ${C_DBX_APP_LOCAL_DB} &> /dev/null",
+        "alembic upgrade head"
+      ],
       "whoami": [
-        "echo \"Check current gcloud-sdk/gcp-api authentication-state ...\"",
+        "echo \"[ops/script] check current gcloud-sdk/gcp-api authentication-state ...\"",
         ". ./scripts/devbox/ops/x_gcloud_whoami.sh"
       ]
     }
