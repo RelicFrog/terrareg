@@ -103,10 +103,10 @@
       ],
       "preflight_mac": [
         "echo \"[ops/cmd] prepare local mac-environment ...\"",
-        "brew install libmagic graphviz",
+        "brew install libmagic graphviz"
       ],
       "init_pyenv": [
-        "echo \"[ops/cmd] prepare local dev-environment ...\"",
+        "echo \"[ops/cmd] prepare local python3 dev environment (using venv) ...\"",
         "virtualenv -ppython3 venv",
         ". venv/bin/activate",
         "pip install -r requirements.txt",
