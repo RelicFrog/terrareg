@@ -54,7 +54,6 @@ For information about running with docker-compose, SSL certificate generation or
 
 ### From a git repo
 
-
 * Goto http://localhost:5000
 * Login, using the button in the top-right hand corner
 * Goto 'Create' -> 'Namespace' (http://localhost:5000/create-namespace)
