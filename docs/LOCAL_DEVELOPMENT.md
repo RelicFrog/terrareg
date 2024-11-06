@@ -41,27 +41,21 @@ Make sure to change the following variables in the .env file before launching:
     devbox run init_db
 ```
 
-#### Start the local docker-compose stack
-
-```bash
-      docker compose up -d
-```
-
 ### Build and test local server with docker-compose
+
+Every change to the [terrareg-code](/terrareg) should lead to a new container image of the application by re-initialising the docker-compose stack, as a build path to the core application has been specified in the compose file instead of a fixed docker image.
 
 ```bash
     docker-compose up -d
 ```
 
-Wait a moment for everything to come online. Terrareg will become available after MySQL comes online.
-
-You can access the stack at the following URLs:
+Wait a moment for everything to come online. Terrareg will become available after MySQL comes online. You can then access the stack at the following URLs:
 
   * terrareg - https://terrareg.app.localhost/
   * phpmyadmin - https://phpmyadmin.app.localhost/
   * traefik - https://traefik.app.localhost
 
-Because everything referencing localhost routes to 172.0.0.1 no special host file entries are required.
+Because everything referencing localhost routes to 172.0.0.1 no special host file entries are required. Please note that all subdomains of the selected `*.app.localhost` domain must have a valid tls certificate. This is generated during the `preflight` phase (`devbox run preflight`) and signed by a local root certificate.
 
 ### Build and test local server ***without*** docker-compose
 
@@ -76,7 +70,7 @@ virtualenv -ppython3 venv
 ## For OS X:
 brew install libmagic
 
-## For Ubuntu
+## For Ubuntu/Debian:
 sudo apt-get install libmagic1
 
 # Install minimum dependencies:
