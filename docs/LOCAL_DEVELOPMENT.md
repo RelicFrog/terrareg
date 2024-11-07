@@ -23,6 +23,17 @@ This project was prepared with a DevBox shell configuration, which prepares all 
     devbox shell
 ```
 
+### DevBox macOS 15.n Sequoia issues (official hotfix)
+
+Apple released 6 macOS 15 Sequoia today–and beta users previously reported that this update breaks existing Nix installations by clobbering _nixbld1-4 (because macOS now includes system daemons that use the same UIDs).
+
+On existing installs, this should manifest as an error when you run some Nix commands:
+
+```bash
+# https://discourse.nixos.org/t/macos-15-sequoia-update-clobbers-nixbld1-4-users/52223
+curl --proto '=https' --tlsv1.2 -sSf -L https://github.com/NixOS/nix/raw/master/scripts/sequoia-nixbld-user-migration.sh | bash -
+```
+
 #### Initialize the Project
 
 You will find an EXAMPLE.env file that is used to configure the stack. Copy this to .env and adjust the configuration options as documented below. The key/value pairs in this file are passed as Environment variables to the terrareg container.
