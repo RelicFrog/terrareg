@@ -1,5 +1,16 @@
 name: Create Release
 
+# --
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# --
+# @notes: This pipeline was changed in favor for our team-infrastructure
+#         and should not be part of any PR to the core repository source
+#         of this project!
+# --
+
 on:
   push:
     tags:
