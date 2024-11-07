@@ -16,3 +16,4 @@ terrareg/version.txt
 /local/
 .idea/*
 devbox.json
+*.sarif
