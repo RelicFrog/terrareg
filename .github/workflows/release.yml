@@ -1,4 +1,4 @@
-name: Create Release
+name: IMG-Release
 
 # --
 # This workflow uses actions that are not certified by GitHub.
@@ -14,7 +14,7 @@ name: Create Release
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "[v]*[0-9]+.[0-9]+.[0-9]+-*"
 
 jobs:
   build:

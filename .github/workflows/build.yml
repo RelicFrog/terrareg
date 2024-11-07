@@ -1,4 +1,4 @@
-name: Docker
+name: IMG-Build
 
 # --
 # This workflow uses actions that are not certified by GitHub.
@@ -14,7 +14,7 @@ name: Docker
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "[v]*[0-9]+.[0-9]+.[0-9]+-*"
 
 env:
   # Use docker.io for this repository
