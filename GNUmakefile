@@ -83,14 +83,16 @@ clean:
 build: prepare
 	echo -e "\n$(T_FX_INFO)@INFO$(T_FX_RESET): BUILD '$(IMAGE_BUILD_TAG_LOCAL):latest', $(IMAGE_BUILD_TAG_LOCAL):$(IMAGE_TAG) [local-target=$(IMAGE_PLATFORM_LOCAL), builder=$(IMAGE_BUILDER_NAME)]\n"
 	docker buildx build --platform $(IMAGE_PLATFORM_LOCAL) \
+	        --build-arg VERSION=v$(IMAGE_TAG) \
 			-t $(IMAGE_BUILD_TAG_LOCAL):latest \
 			-t $(IMAGE_BUILD_TAG_LOCAL):$(IMAGE_TAG) --load . && \
 	$(MAKE) check ;
 
-## Prepare and push local build docker image to internal artifactory (check for security issue(s) first)
+## Prepare and push local build docker image to internal artifactory (todo: check for security issue(s) first)
 push: prepare
 	echo -e "\n$(T_FX_INFO)@INFO$(T_FX_RESET): BUILD+PUSH '$(IMAGE_BUILD_TAG):latest', $(IMAGE_BUILD_TAG):$(IMAGE_TAG) [target=$(IMAGE_PLATFORMS), builder=$(IMAGE_BUILDER_NAME)]\n"
 	docker buildx build --platform $(IMAGE_PLATFORMS) --push \
+	        --build-arg VERSION=v$(IMAGE_TAG) \
 			-t $(IMAGE_BUILD_TAG):latest \
 			-t $(IMAGE_BUILD_TAG):$(IMAGE_TAG) . && \
 	$(MAKE) check ;
@@ -127,6 +129,14 @@ login-hub:
 		gcloud auth configure-docker $$IMAGE_ARTIFACT_URL; \
 		helm registry login -u oauth2accesstoken -p "$$(gcloud auth print-access-token)" $$IMAGE_ARTIFACT_URL; \
 	fi
+
+## Login shortcut to docker hub
+login-docker:
+	echo -e "\n$(T_FX_INFO)@INFO$(T_FX_RESET): As an alternative to this make declaration, you can also use our $(T_FX_HIGHLIGHT)$$ devbox shell$(T_FX_RESET) approach."
+	echo -e "For more information, please refer to the primary documentation (README.md) of this repository."
+	echo -e "The corresponding call therefore would be: $(T_FX_COMMAND)$$ devbox login-docker$(T_FX_RESET)"
+	echo -e "$(T_FX_RESET)--"
+	docker login
 
 ## Login shortcut to gcloud auth
 login-google:
