@@ -136,3 +136,12 @@ pytest ./test/selenium
 # Running a specific test
 pytest -k test_setup_page
 ```
+
+## Build + Check local Application Docker-Image
+
+```bash
+# create local docker image for terrareg (t42-local/terrareg:latest, t42-local/terrareg:3.12.2-edp-1)
+make build
+# check docker image using trivy
+make check
+```
