@@ -262,8 +262,13 @@ gke-cluster-auth:
 
 ## Quick GKE-cluster iam-extend-task
 gke-extend-iam:
+	echo "[make/cmd] activate workloadIdentityUser for GKE-SA '$$GCP_SA_ID' ..."; \
+	gcloud iam service-accounts add-iam-policy-binding \
+    $$GCP_SA_ID@$$GCP_PROJECT_ID.iam.gserviceaccount.com \
+    	--role="roles/iam.workloadIdentityUser" \
+    	--member="serviceAccount:$$GCP_PROJECT_ID.svc.id.goog[terrareg/$$GCP_SA_ID]"
 	echo "[make/cmd] activate IAM policy bindings for GKE/GCP ..."; \
-	for role in "roles/iam.serviceAccountUser" "roles/container.clusterAdmin" "roles/container.admin" "roles/compute.admin" "roles/storage.objectAdmin" "roles/dns.admin" "roles/certificatemanager.editor" "roles/workloadcertificate.admin" "roles/compute.networkAdmin" "roles/cloudsql.client"; do \
+	for role in "roles/logging.logWriter" "roles/iam.serviceAccountUser" "roles/container.clusterAdmin" "roles/container.admin" "roles/compute.admin" "roles/storage.objectAdmin" "roles/dns.admin" "roles/certificatemanager.editor" "roles/workloadcertificate.admin" "roles/compute.networkAdmin" "roles/cloudsql.client" "roles/cloudsql.instanceUser"; do \
 		echo "[make/cmd] checking if '$$role' is already bound to service account ..."; \
 		if ! gcloud projects get-iam-policy $$GCP_PROJECT_NUM --flatten="bindings[].members" --format="value(bindings.role)" --filter="bindings.members:serviceAccount:$$GCP_SA_ID@$$GCP_PROJECT_ID.iam.gserviceaccount.com AND bindings.role=$$role" | grep -q "$$role"; then \
 			echo "[make/cmd] binding '$$role' to new gke-service-account ..."; \
@@ -287,7 +292,7 @@ gke-cluster-preflight:
 	echo "[make/cmd] init | Checking if SA exists ..."
 	if ! gcloud iam service-accounts describe $$GCP_SA_ID@$$GCP_PROJECT_ID.iam.gserviceaccount.com >/dev/null 2>&1; then \
 		echo "[make/cmd] init | SA not found, creating now ..."; \
-		gcloud iam service-accounts create $$GCP_SA_ID --description="boring-registry gke+gcs service-account (for all operations)" --display-name="SA for Boring-Registry GKE/GCE (Ops)"; \
+		gcloud iam service-accounts create $$GCP_SA_ID --description="boring-registry gke+gcs service-account (for all operations)" --display-name="SA for GKE/GCE/GCS+CloudSQL access (Ops)"; \
 		echo "[make/cmd] init | checking and activating GCS access policy ..."; \
 		if ! gsutil iam get gs://$$GCS_BUCKET | grep -q "serviceAccount:$$GCP_SA_ID@$$GCP_PROJECT_ID.iam.gserviceaccount.com.*roles/storage.objectAdmin"; then \
 			echo "[make/cmd] binding 'storage.objectAdmin' role to service account on bucket ..."; \
@@ -297,7 +302,7 @@ gke-cluster-preflight:
 		fi; \
 		echo "[make/cmd] init | GCS access policy assignment complete."; \
 		echo "[make/cmd] init | activate IAM policy bindings for GKE/BR ..."; \
-		for role in "roles/iam.serviceAccountUser" "roles/container.clusterAdmin" "roles/container.admin" "roles/compute.admin" "roles/storage.objectAdmin" "roles/dns.admin" "roles/certificatemanager.editor" "roles/workloadcertificate.admin" "roles/compute.networkAdmin" "roles/cloudsql.client"; do \
+		for role in "roles/logging.logWriter" "roles/iam.serviceAccountUser" "roles/container.clusterAdmin" "roles/container.admin" "roles/compute.admin" "roles/storage.objectAdmin" "roles/dns.admin" "roles/certificatemanager.editor" "roles/workloadcertificate.admin" "roles/compute.networkAdmin" "roles/cloudsql.client" "roles/cloudsql.instanceUser"; do \
 			echo "[make/cmd] init | checking if '$$role' is already bound to service account ..."; \
 			if ! gcloud projects get-iam-policy $$GCP_PROJECT_NUM --flatten="bindings[].members" --format="value(bindings.role)" --filter="bindings.members:serviceAccount:$$GCP_SA_ID@$$GCP_PROJECT_ID.iam.gserviceaccount.com AND bindings.role=$$role" | grep -q "$$role"; then \
 				echo "[make/cmd] init | binding '$$role' to new gke-service-account ..."; \
@@ -325,8 +330,12 @@ gcp-cloudsql-create:
 			--database-version=$$GCP_CLOUD_SQL_VERSION \
 			--tier=$$GCP_CLOUD_SQL_TIER \
 			--region=$$GKE_CLUSTER_REGION \
-			--root-password=$$C_DBX_APP_GCP_CLOUDSQL_PASSWORD \
+			--root-password=$$C_DBX_APP_GCP_CLOUDSQL_PASSWORD_ROOT \
 			--storage-size=$$GCP_CLOUD_SQL_STORAGE_SIZE; \
+		echo "[make/cmd] cloud-sql | create application user '$$C_DBX_APP_GCP_CLOUDSQL_USERNAME'"; \
+		gcloud sql users create $$C_DBX_APP_GCP_CLOUDSQL_USERNAME --instance=$$GCP_TENANT-mysql-instance --password=$$GCP_DBX_APP_GCP_CLOUDSQL_PASSWORD; \
+		echo "[make/cmd] cloud-sql | create new default database 'terrareg'"; \
+		gcloud sql databases create terrareg --instance=terrareg-mysql-instance --charset=utf8mb4 --collation=utf8mb4_general_ci; \
 		echo "[make/cmd] cloud-sql | instance provisioning complete +++"; \
 	fi
 
