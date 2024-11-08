@@ -1,0 +1,89 @@
+#
+# traefik-values.yaml
+# --
+
+deployment:
+  enabled: true
+  kind: Deployment
+  replicas: 1
+
+autoscaling:
+  enabled: false
+
+logs:
+  general:
+    level: "DEBUG"
+  access:
+    enabled: true
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+# Deactivate statistics and check-new-version
+globalArguments: []
+
+# Resource limits for GKE autopilot
+resources:
+  limits:
+    ephemeral-storage: 1Gi
+  requests:
+    cpu: 500m
+    ephemeral-storage: 1Gi
+    memory: 1Gi
+
+# ACME DNS challenge configuration for Let's Encrypt
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: patrick.paechnatz@relicfrog.rocks
+      storage: /data/acme.json
+      dnsChallenge:
+        provider: gcloud
+        delayBeforeCheck: 45
+
+# Middleware to redirect HTTP to HTTPS
+middleware:
+  https-redirect:
+    redirectScheme:
+      scheme: https
+      permanent: true
+
+# Entry points for HTTP and HTTPS
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: ":443"
+    http:
+      tls:
+        certResolver: letsencrypt
+
+# Traefik service setup
+service:
+  type: LoadBalancer
+  annotations:
+    cloud.google.com/load-balancer-type: "External"
+
+persistence:
+  enabled: false
+  name: acme-storage
+  mountPath: /data
+  size: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClass: "standard"
+
+# Pod-level security settings to allow writing to /data
+podSecurityContext:
+  fsGroup: 65532  # Ensure that the Traefik process can access the volume
+
+# Security context for the container itself (optional but can be included)
+securityContext:
+  runAsUser: 65532  # The user Traefik runs as in the container
