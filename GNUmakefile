@@ -126,6 +126,7 @@ prepare:
 
 ##-- [ Basic Commands ] --
 
+## GCP API Updates
 api-update:
 	echo -e "\033[33m@INFO\033[0m: As an alternative to this make declaration, you can also use our \033[34m$$ devbox shell\033[0m approach."
 	echo -e "For more information, please refer to the primary documentation (README.md) of this repository."
@@ -136,6 +137,7 @@ api-update:
 	echo "[make/cmd] update GCloud Components now ..."
 	gcloud components update
 
+## GCP API Preflight Procedures
 api-prep:
 	echo -e "\033[33m@INFO\033[0m: As an alternative to this make declaration, you can also use our \033[34m$$ devbox shell\033[0m approach."
 	echo -e "For more information, please refer to the primary documentation (README.md) of this repository."
@@ -191,6 +193,8 @@ logout-google:
 	echo -e "$(T_FX_RESET)--"
 	gcloud auth application-default revoke --quiet
 	gcloud auth revoke --all
+
+##-- [ Quick Commands for GKE/GCP ] --
 
 ## Quick GKE-cluster destroy
 gke-cluster-destroy:
@@ -256,8 +260,8 @@ gke-cluster-auth:
 
 ## Quick GKE-cluster iam-extend-task
 gke-extend-iam:
-	echo "[make/cmd] activate IAM policy bindings for GKE/BR ..."; \
-	for role in "roles/iam.serviceAccountUser" "roles/container.clusterAdmin" "roles/container.admin" "roles/compute.admin" "roles/storage.objectAdmin" "roles/dns.admin" "roles/certificatemanager.editor" "roles/workloadcertificate.admin" "roles/compute.networkAdmin"; do \
+	echo "[make/cmd] activate IAM policy bindings for GKE/GCP ..."; \
+	for role in "roles/iam.serviceAccountUser" "roles/container.clusterAdmin" "roles/container.admin" "roles/compute.admin" "roles/storage.objectAdmin" "roles/dns.admin" "roles/certificatemanager.editor" "roles/workloadcertificate.admin" "roles/compute.networkAdmin" "roles/cloudsql.client"; do \
 		echo "[make/cmd] checking if '$$role' is already bound to service account ..."; \
 		if ! gcloud projects get-iam-policy $$GCP_PROJECT_NUM --flatten="bindings[].members" --format="value(bindings.role)" --filter="bindings.members:serviceAccount:$$GCP_SA_ID@$$GCP_PROJECT_ID.iam.gserviceaccount.com AND bindings.role=$$role" | grep -q "$$role"; then \
 			echo "[make/cmd] binding '$$role' to new gke-service-account ..."; \
@@ -291,7 +295,7 @@ gke-cluster-preflight:
 		fi; \
 		echo "[make/cmd] init | GCS access policy assignment complete."; \
 		echo "[make/cmd] init | activate IAM policy bindings for GKE/BR ..."; \
-		for role in "roles/iam.serviceAccountUser" "roles/container.clusterAdmin" "roles/container.admin" "roles/compute.admin" "roles/storage.objectAdmin" "roles/dns.admin" "roles/certificatemanager.editor" "roles/workloadcertificate.admin" "roles/compute.networkAdmin"; do \
+		for role in "roles/iam.serviceAccountUser" "roles/container.clusterAdmin" "roles/container.admin" "roles/compute.admin" "roles/storage.objectAdmin" "roles/dns.admin" "roles/certificatemanager.editor" "roles/workloadcertificate.admin" "roles/compute.networkAdmin" "roles/cloudsql.client"; do \
 			echo "[make/cmd] init | checking if '$$role' is already bound to service account ..."; \
 			if ! gcloud projects get-iam-policy $$GCP_PROJECT_NUM --flatten="bindings[].members" --format="value(bindings.role)" --filter="bindings.members:serviceAccount:$$GCP_SA_ID@$$GCP_PROJECT_ID.iam.gserviceaccount.com AND bindings.role=$$role" | grep -q "$$role"; then \
 				echo "[make/cmd] init | binding '$$role' to new gke-service-account ..."; \
@@ -305,3 +309,13 @@ gke-cluster-preflight:
 		echo "[make/cmd] init | SA already exists, skipping creation/alignment process ..."; \
 	fi
 	echo "[make/cmd] init | preflight complete +++"; \
+
+##-- [ Common GKE Payloads ] --
+
+## Install Lightweight Traefik in Debug-Mode
+traefik-update:
+	helm upgrade --install traefik traefik/traefik -f manifests/common/traefik/values.yaml --namespace traefik --create-namespace
+
+## Remove Traefik from Cluster
+traefik-destroy:
+	helm delete traefik --namespace traefik
