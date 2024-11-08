@@ -16,8 +16,8 @@
 
 # Setup makefile init scope
 SHELL := /bin/bash
-.PHONY: gke-cluster-preflight gke-cluster-create gke-cluster-destroy gke-cluster-auth gke-cluster-sa-reset gke-extend-iam api-prep api-update logout-google login-google login-hub do-prep-gitleaks build push clean check
-.SILENT: gke-cluster-preflight gke-cluster-create gke-cluster-destroy gke-cluster-auth gke-cluster-sa-reset gke-extend-iam api-prep api-update logout-google login-google login-hub do-prep-gitleaks build push clean check
+.PHONY: gcp-cloudsql-create gcp-cloudsql-destroy gke-cluster-preflight gke-cluster-create gke-cluster-destroy gke-cluster-auth gke-cluster-sa-reset gke-extend-iam api-prep api-update logout-google login-google login-hub do-prep-gitleaks build push clean check
+.SILENT: gcp-cloudsql-create gcp-cloudsql-destroy gke-cluster-preflight gke-cluster-create gke-cluster-destroy gke-cluster-auth gke-cluster-sa-reset gke-extend-iam api-prep api-update logout-google login-google login-hub do-prep-gitleaks build push clean check
 .DEFAULT_GOAL := help
 
 # Detect current host CPU architecture
@@ -45,12 +45,15 @@ endif
 # Define export vars
 export GCP_PROJECT_ID=ordinal-idea-428811-f9
 export GCP_PROJECT_NUM=734428111519
-export GCS_TENANT=terrareg
-export GCS_BUCKET=$(GCS_TENANT)-exhy4dxkx2bkupze
-export GCP_SA_ID=$(GCS_TENANT)-ops
-export GKE_CLUSTER_NAME=$(GCS_TENANT)-green
+export GCP_TENANT=terrareg
+export GCS_BUCKET=$(GCP_TENANT)-exhy4dxkx2bkupze
+export GCP_SA_ID=$(GCP_TENANT)-ops
+export GKE_CLUSTER_NAME=$(GCP_TENANT)-green
 export GKE_CLUSTER_REGION=europe-west3
 export GKE_CLUSTER_CHANNEL=stable
+export GCP_CLOUD_SQL_VERSION=MYSQL_8_0
+export GCP_CLOUD_SQL_TIER=db-f1-micro
+export GCP_CLOUD_SQL_STORAGE_SIZE=10GB
 
 # Define local makefile variables
 GITLEAKS_VERSION = 8.18.4
@@ -153,6 +156,7 @@ api-prep:
 	gcloud services enable iam.googleapis.com
 	gcloud services enable logging.googleapis.com
 	gcloud services enable monitoring.googleapis.com
+	gcloud services enable sqladmin.googleapis.com
 
 ## Login shortcut to gcp oci/artifactory
 login-hub:
@@ -198,8 +202,7 @@ logout-google:
 
 ## Quick GKE-cluster destroy
 gke-cluster-destroy:
-	echo -e "\033[33m@INFO\033[0m: GCP GKE Cluster is now being destroyed ... \033[0mThis may take a few minutes depending on the cluster size."
-	echo -e "\033[0m"
+	echo -e "$(T_FX_INFO)@INFO$(T_FX_RESET): GCP GKE Cluster is now being destroyed ... This may take a few minutes depending on the cluster size.\n"
 	echo "[make/cmd] init | Checking if Cluster exists ..."
 	if gcloud container clusters describe $$GKE_CLUSTER_NAME --region=$$GKE_CLUSTER_REGION --project=$$GCP_PROJECT_ID >/dev/null 2>&1; then \
 		echo "[make/cmd] GKE-Cluster '$$GKE_CLUSTER_NAME' found, proceeding with deletion ..."; \
@@ -215,8 +218,7 @@ gke-cluster-destroy:
 
 ## Quick GKE-cluster create
 gke-cluster-create: gke-cluster-preflight
-	echo -e "\033[33m@INFO\033[0m: GCP GKE Cluster is now being created ... \033[0mThis can take up to\033[37m 10\033[0m minutes depending on available resources!"
-	echo -e "\033[0m"
+	echo -e "$(T_FX_INFO)@INFO$(T_FX_RESET): GCP GKE Cluster is now being created ... This can take up to\033[37m 10\033[0m minutes depending on available resources!\n"
 	echo "[make/cmd] init | Checking if Cluster exists and all preflight requirements are met ..."
 	if ! gcloud iam service-accounts describe $$GCP_SA_ID@$$GCP_PROJECT_ID.iam.gserviceaccount.com >/dev/null 2>&1; then \
 		echo "[make/cmd] SA not found, please call 'make gke-create-sa' first!"; \
@@ -234,7 +236,7 @@ gke-cluster-create: gke-cluster-preflight
 
 ## Quick GKE-cluster service-account reset
 gke-cluster-sa-reset:
-	echo -e "\033[33m@INFO\033[0m: Service Account and associated IAM policy bindings are being de-provisioned ... \033[0m"
+	echo -e "$(T_FX_INFO)@INFO$(T_FX_RESET): Service Account and associated IAM policy bindings are being de-provisioned ...\n"
 	echo "[make/cmd] init | Checking if Service Account exists ..."
 	if gcloud iam service-accounts describe $$GCP_SA_ID@$$GCP_PROJECT_ID.iam.gserviceaccount.com >/dev/null 2>&1; then \
 		echo "[make/cmd] Service Account '$$GCP_SA_ID' found, proceeding with deletion ..."; \
@@ -247,8 +249,7 @@ gke-cluster-sa-reset:
 
 ## Quick GKE-cluster auth
 gke-cluster-auth:
-	echo -e "\033[33m@INFO\033[0m: Login to GKE Cluster '$$GKE_CLUSTER_NAME' ... \033[0m"
-	echo -e "\033[0m"
+	echo -e "\033[33m@INFO\033[0m: Login to GKE Cluster '$$GKE_CLUSTER_NAME' ...\n"
 	echo "[make/cmd] init | Checking if Cluster exists ..."
 	if gcloud container clusters describe $$GKE_CLUSTER_NAME --region=$$GKE_CLUSTER_REGION --project=$$GCP_PROJECT_ID >/dev/null 2>&1; then \
 		echo "[make/cmd] GKE-Cluster '$$GKE_CLUSTER_NAME' found, proceeding with authentication ..."; \
@@ -274,7 +275,7 @@ gke-extend-iam:
 
 ## Quick GKE-cluster preflight
 gke-cluster-preflight:
-	echo -e "\033[33m@INFO\033[0m: GCP GKE Cluster will now be prepared ... \033[0m\n"
+	echo -e "$(T_FX_INFO)@INFO$(T_FX_RESET): GCP GKE Cluster will now be prepared ...\n"
 	echo "[make/cmd] init | create GCE bucket ..."
 	if ! gcloud storage buckets list --project=$$GCP_PROJECT_ID --filter="name:$$GCS_BUCKET" --format="value(name)" | grep -q $$GCS_BUCKET; then \
 		gcloud storage buckets create gs://$$GCS_BUCKET --project $$GCP_PROJECT_ID --location $$GKE_CLUSTER_REGION; \
@@ -310,6 +311,35 @@ gke-cluster-preflight:
 	fi
 	echo "[make/cmd] init | preflight complete +++"; \
 
+##-- [ GCP Cloud SQL Commands ] --
+
+## Install Lightweight MySQL Instance using CloudSQL
+
+gcp-cloudsql-create:
+	echo -e "$(T_FX_INFO)@INFO$(T_FX_RESET): GCP CloudSQL instance will now be prepared ... $(T_FX_RESET)";
+	@if gcloud sql instances describe $$GCP_TENANT-mysql-instance --format="value(name)" > /dev/null 2>&1; then \
+		echo "[make/cmd] cloudSQL instance '$$GCP_TENANT-mysql-instance' already exists. Skipping creation."; \
+	else \
+		gcloud sql instances create $$GCP_TENANT-mysql-instance \
+			--database-version=$$GCP_CLOUD_SQL_VERSION \
+			--tier=$$GCP_CLOUD_SQL_TIER \
+			--region=$$GKE_CLUSTER_REGION \
+			--root-password=$$C_DBX_APP_GCP_CLOUDSQL_PASSWORD \
+			--storage-size=$$GCP_CLOUD_SQL_STORAGE_SIZE; \
+		echo "[make/cmd] cloud-sql | instance provisioning complete +++"; \
+	fi
+
+## Delete MySQL Instance (CloudSQL)
+
+gcp-cloudsql-delete:
+	echo -e "$(T_FX_INFO)@INFO$(T_FX_RESET): GCP CloudSQL instance will now be deleted ... $(T_FX_RESET)";
+	@if gcloud sql instances describe $$GCP_TENANT-mysql-instance --format="value(name)" > /dev/null 2>&1; then \
+		gcloud sql instances delete $$GCP_TENANT-mysql-instance --quiet; \
+		echo "[make/cmd] cloud-sql | instance de-provisioning complete +++"; \
+	else \
+		echo "[make/cmd] cloudSQL instance '$$GCP_TENANT-mysql-instance' does not exists. Skipping deletion."; \
+	fi
+
 ##-- [ Common GKE Payloads ] --
 
 ## Install Lightweight Traefik in Debug-Mode
@@ -319,3 +349,4 @@ traefik-update:
 ## Remove Traefik from Cluster
 traefik-destroy:
 	helm delete traefik --namespace traefik
+

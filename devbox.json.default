@@ -51,7 +51,8 @@
     "C_DBX_GKE_PROJECT_ID": "<your-gcp-project-name>",
     "C_DBX_GKE_PROJECT_NUM": "<your-gcp-project-number>",
     "C_DBX_APP_LOCAL_DB": "modules.db",
-    "C_DBX_APP_LOCAL_DOMAIN": "app.localhost"
+    "C_DBX_APP_LOCAL_DOMAIN": "app.localhost",
+    "C_DBX_APP_GCP_CLOUDSQL_PASSWORD": "<your-secret-cloudsql-root-password>"
   },
   "shell": {
     "init_hook": [
