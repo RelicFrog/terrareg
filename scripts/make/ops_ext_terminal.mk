@@ -4,6 +4,8 @@ PURPLE = \033[35m
 YELLOW = \033[33m
 RESET = \033[0m
 
+##-- [ Help + Documentation ] --
+
 ## List available tasks on this project
 help:
 	@echo -e "\n$(GREEN)TerraReg$(RESET) Makefile Context by $(GREEN)Team-42$(RESET)."

@@ -1,6 +1,4 @@
-##-- [ Internal Commands ] --
 
-## Prepare gitleaks binary package (native option)
 do-prep-gitleaks:
 	@if [ -f "$(GITLEAKS_BINARY)" ]; then \
 		echo "Gitleaks binary already exists, skipping preparation."; \
