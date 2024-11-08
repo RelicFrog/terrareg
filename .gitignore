@@ -17,3 +17,4 @@ terrareg/version.txt
 .idea/*
 devbox.json
 *.sarif
+/manifests/prod
