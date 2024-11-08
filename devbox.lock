@@ -145,6 +145,70 @@
         }
       }
     },
+    "certbot@2.11.0": {
+      "last_modified": "2024-10-13T23:44:06Z",
+      "resolved": "github:NixOS/nixpkgs/d4f247e89f6e10120f911e2e2d2254a050d0f732#certbot",
+      "source": "devbox-search",
+      "version": "2.11.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/f9ih5g47i3jm6vci8ifq5vvcvx99g47k-python3.12-certbot-2.11.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/66xdgwljr8iyb4jmbmx1r79h8l30q4b6-python3.12-certbot-2.11.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/f9ih5g47i3jm6vci8ifq5vvcvx99g47k-python3.12-certbot-2.11.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ngxznl0aamq62jwbak60pm8yj7j10004-python3.12-certbot-2.11.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/4rrkfvw0bzv9qnafllw97vxc0nav7czd-python3.12-certbot-2.11.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/ngxznl0aamq62jwbak60pm8yj7j10004-python3.12-certbot-2.11.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/bdikyc8zvydan6k83mls6yqzsl78z654-python3.12-certbot-2.11.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/vnh3019m6df7ss0jhxab0vn1hbff3mlf-python3.12-certbot-2.11.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/bdikyc8zvydan6k83mls6yqzsl78z654-python3.12-certbot-2.11.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/9kkfn9dps3cdrvsm923n2czspskhls34-python3.12-certbot-2.11.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/q7dbirljvn356aa2rb8ikynask8rlv9i-python3.12-certbot-2.11.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/9kkfn9dps3cdrvsm923n2czspskhls34-python3.12-certbot-2.11.0"
+        }
+      }
+    },
     "curl@8.8.0": {
       "last_modified": "2024-08-14T02:42:29Z",
       "resolved": "github:NixOS/nixpkgs/daf7bb95821b789db24fc1ac21f613db0c1bf2cb#curl",
@@ -1538,6 +1602,70 @@
             }
           ],
           "store_path": "/nix/store/8yhavdsx9gj051yxx0m2d43j2sa7xrmn-python3.12-alembic-1.13.1"
+        }
+      }
+    },
+    "python312Packages.certbot@2.11.0": {
+      "last_modified": "2024-10-13T23:44:06Z",
+      "resolved": "github:NixOS/nixpkgs/d4f247e89f6e10120f911e2e2d2254a050d0f732#python312Packages.certbot",
+      "source": "devbox-search",
+      "version": "2.11.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/f9ih5g47i3jm6vci8ifq5vvcvx99g47k-python3.12-certbot-2.11.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/66xdgwljr8iyb4jmbmx1r79h8l30q4b6-python3.12-certbot-2.11.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/f9ih5g47i3jm6vci8ifq5vvcvx99g47k-python3.12-certbot-2.11.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ngxznl0aamq62jwbak60pm8yj7j10004-python3.12-certbot-2.11.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/4rrkfvw0bzv9qnafllw97vxc0nav7czd-python3.12-certbot-2.11.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/ngxznl0aamq62jwbak60pm8yj7j10004-python3.12-certbot-2.11.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/bdikyc8zvydan6k83mls6yqzsl78z654-python3.12-certbot-2.11.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/vnh3019m6df7ss0jhxab0vn1hbff3mlf-python3.12-certbot-2.11.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/bdikyc8zvydan6k83mls6yqzsl78z654-python3.12-certbot-2.11.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/9kkfn9dps3cdrvsm923n2czspskhls34-python3.12-certbot-2.11.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/q7dbirljvn356aa2rb8ikynask8rlv9i-python3.12-certbot-2.11.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/9kkfn9dps3cdrvsm923n2czspskhls34-python3.12-certbot-2.11.0"
         }
       }
     },
