@@ -157,6 +157,7 @@ api-prep:
 	gcloud services enable logging.googleapis.com
 	gcloud services enable monitoring.googleapis.com
 	gcloud services enable sqladmin.googleapis.com
+	gcloud services enable networkmanagement.googleapis.com
 
 ## Login shortcut to gcp oci/artifactory
 login-hub:
