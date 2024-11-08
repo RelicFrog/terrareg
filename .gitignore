@@ -18,3 +18,4 @@ terrareg/version.txt
 devbox.json
 *.sarif
 /manifests/prod
+*.log
