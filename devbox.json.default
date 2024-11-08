@@ -52,7 +52,9 @@
     "C_DBX_GKE_PROJECT_NUM": "<your-gcp-project-number>",
     "C_DBX_APP_LOCAL_DB": "modules.db",
     "C_DBX_APP_LOCAL_DOMAIN": "app.localhost",
-    "C_DBX_APP_GCP_CLOUDSQL_PASSWORD": "<your-secret-cloudsql-root-password>"
+    "C_DBX_APP_GCP_CLOUDSQL_PASSWORD": "<your-secret-cloudsql-root-password>",
+    "C_DBX_APP_GCP_CLOUDSQL_USERNAME": "<your-secret-cloudsql-terragrunt-app-username>",
+    "C_DBX_APP_GCP_CLOUDSQL_PASSWORD": "<your-secret-cloudsql-terragrunt-app-password>"
   },
   "shell": {
     "init_hook": [
