@@ -13,6 +13,7 @@
     "python312Packages.alembic":           "1.13.1",
     "python312Packages.flask":             "3.0.3",
     "python312Packages.packaging":         "24.1",
+    "python312Packages.virtualenv":		   "20.26.6",
     "pkg-config":                          "0.29.2",
     "graphviz":                            "12.1.1",
     "gitleaks":                            "8.18.4",
