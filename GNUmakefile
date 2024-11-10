@@ -5,9 +5,9 @@
 # @purpose: base commands for handling GCP related provisioning process using makefile-based targets action calls
 # ---------------------------------------------------------------------------------------------------------------------
 # @author: Patrick Paechnatz <patrick.paechnatz@gmail.com>
-# @version: 1.0.2
+# @version: 1.0.3
 # @createdAt: 2024-09-11
-# @updatedAt: 2024-11-08
+# @updatedAt: 2024-11-10
 # ---------------------------------------------------------------------------------------------------------------------
 
 # Include functional extensions
@@ -150,14 +150,20 @@ api-prep:
 	gcloud config set disable_usage_reporting true &> /dev/null
 	echo "[make/cmd] update GCloud Components now ..."
 	gcloud components update
-	echo "[make/cmd] activate api endpoints required for this project ..."
-	gcloud services enable container.googleapis.com
-	gcloud services enable compute.googleapis.com
-	gcloud services enable iam.googleapis.com
-	gcloud services enable logging.googleapis.com
-	gcloud services enable monitoring.googleapis.com
-	gcloud services enable sqladmin.googleapis.com
-	gcloud services enable networkmanagement.googleapis.com
+	echo "[make/cmd] activate api endpoints required for project '${C_DBX_GKE_PROJECT_ID}' ..."
+	gcloud services enable container.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable containerregistry.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable compute.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable iam.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable logging.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable monitoring.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable sqladmin.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable networkmanagement.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable cloudresourcemanager.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable iamcredentials.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable sts.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable binaryauthorization.googleapis.com --project=${C_DBX_GKE_PROJECT_ID},
+	gcloud services enable certificatemanager.googleapis.com --project=${C_DBX_GKE_PROJECT_ID}
 
 ## Login shortcut to gcp oci/artifactory
 login-hub:
